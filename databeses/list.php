@@ -34,7 +34,7 @@
             <a href="add.php">Add</a>
           </li>
           <li class="active">
-            <a href="list.php">Listar Datos</a>
+            <a href="list.php">List</a>
           </li>
         </ul>
       </div><!-- /.navbar-collapse -->

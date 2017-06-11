@@ -44,6 +44,9 @@
           <li class="active">
             <a href="add.php">Add</a>
           </li>
+          <li>
+            <a href="list.php">List</a>
+          </li>
         </ul>
       </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
