@@ -1,6 +1,31 @@
-<?php 
+<?php
   require_once'config.php';
-  $queryResult = $pdo->query("SELECT * FROM users");
+  $result = false;
+  if (!empty($_POST)) {
+    extract($_POST);
+    $sql = "UPDATE users SET name=:name, email=:email WHERE id=:id";
+    $query = $pdo->prepare($sql);
+    $result = $query->execute([
+      'name' => $name,
+      'email' => $email,
+      'id' => $id
+    ]);
+    $nameValue = $name;
+    $emailValue = $email;
+    $idValue = $id;
+  }
+  elseif (!empty($_GET)) {
+    $id = $_GET['id'];
+    $sql = "SELECT * FROM users WHERE id = :id";
+    $query = $pdo->prepare($sql);
+    $query->execute([
+      'id' => $id
+    ]);
+    $row = $query->fetch(PDO::FETCH_ASSOC);
+    $nameValue = $row['name'];
+    $emailValue = $row['email'];
+    $idValue = $row['id'];
+  }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -28,55 +53,38 @@
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
           <li>
-            <a href="index.php">Home <span class="sr-only">(current)</span></a>
+            <a href="./update.php">Home <span class="sr-only">(current)</span></a>
           </li>
           <li>
             <a href="add.php">Add</a>
           </li>
+          <li>
+            <a href="list.php">Listar</a>
+          </li>
           <li class="active">
-            <a href="list.php">Listar Datos</a>
+            <a href="update.php?id=<?php echo  $id ?>">Update</a>
           </li>
         </ul>
       </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
   </nav>
+
   <section class="container">
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Email</th>
-          <th>Actualizar</th>
-          <th>Eliminar</th>
-        </tr>
-      </thead>
-      <tfoot>
-        <tr>
-          <th>Nombre</th>
-          <th>Email</th>
-          <th>Actualizar</th>
-          <th>Eliminar</th>
-        </tr>
-      </tfoot>
-      <tbody>
-        <?php while ($row = $queryResult->fetch(PDO::FETCH_ASSOC)):?>
-          <tr>
-            <td><?php echo $row['name']; ?></td>
-            <td><?php echo $row['email']; ?></td>
-            <td>
-              <a href="update.php?id=<?php echo $row['id']; ?>" class="btn btn-default" aria-label="Left Align">
-                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-              </a>
-            </td>
-            <td>
-              <a href="delete.php?id=<?php echo $row['id']; ?>" class="btn btn-default" aria-label="Left Align">
-                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-              </a>
-            </td>
-          </tr>
-        <?php endwhile ?>
-      </tbody>
-    </table>
+    <?php if ($result): ?>
+      <div class="alert alert-success">Actualizado con exito!</div>
+    <?php endif ?>
+    <form action="" method="POST" autocomplete="off">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="name" class="form-control" id="name" name="name" placeholder="Name" value="<?php echo $nameValue; ?>">
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" class="form-control" id="email" name="email" placeholder="Email" value="<?php echo $emailValue; ?>">
+      </div>
+      <input type="hidden" name="id" value="<?php echo $idValue; ?>">
+      <button type="submit" class="btn btn-default">Actualizar</button>
+    </form>
   </section>
   <!-- Jquery -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
